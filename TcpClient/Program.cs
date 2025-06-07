@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,27 +16,28 @@ class TcpClientApp
 
             using var stream = client.GetStream();
 
-            while (true)
+            var receiveBuffer = new byte[512];
+            int totalReceived = 0;
+            while (totalReceived < 512 * 1000)
             {
-                Console.Write("Enter message (or 'exit' to quit): ");
-                string message = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(message)) continue;
-                if (message.ToLower() == "exit") break;
-
-                byte[] data = Encoding.UTF8.GetBytes(message);
-                await stream.WriteAsync(data, 0, data.Length);
-
-                byte[] buffer = new byte[1024];
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                Console.WriteLine("Received from server: " + response);
+                int bytesRead = await stream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
+                if (bytesRead == 0)
+                {
+                    return;
+                }
+                totalReceived += bytesRead;
             }
+
+            await stream.WriteAsync(new byte[] { 1 }, 0, 1);
+
+            var resultBuffer = new byte[64];
+            int len = await stream.ReadAsync(resultBuffer, 0, resultBuffer.Length);
+            var result = Encoding.UTF8.GetString(resultBuffer, 0, len);
+            Console.WriteLine($"Elapsed: {result} ms");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception: " + ex.Message);
+            Console.WriteLine($"Exception: {ex.Message}");
         }
 
         Console.WriteLine("Disconnected.");

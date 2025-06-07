@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -23,29 +24,34 @@ class TcpServer
     static async Task HandleClient(TcpClient client)
     {
         using var stream = client.GetStream();
-        var buffer = new byte[1024];
+        var sendBuffer = new byte[512];
+        new Random().NextBytes(sendBuffer);
 
         try
         {
-            while (true)
+            var sw = Stopwatch.StartNew();
+            for (int i = 0; i < 1000; i++)
             {
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break; // 接続終了
-
-                string received = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                Console.WriteLine("Received: " + received);
-
-                // エコーバック
-                byte[] response = Encoding.UTF8.GetBytes("Echo: " + received);
-                await stream.WriteAsync(response, 0, response.Length);
+                await stream.WriteAsync(sendBuffer, 0, sendBuffer.Length);
             }
+
+            var responseBuffer = new byte[16];
+            int bytesRead = 0;
+            while (bytesRead == 0)
+            {
+                bytesRead = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
+            }
+            sw.Stop();
+
+            var resultBytes = Encoding.UTF8.GetBytes(sw.Elapsed.TotalMilliseconds.ToString());
+            await stream.WriteAsync(resultBytes, 0, resultBytes.Length);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception: " + ex.Message);
+            Console.WriteLine($"Exception: {ex.Message}");
         }
 
-        Console.WriteLine("Client disconnected.");
         client.Close();
+        Console.WriteLine("Client disconnected.");
     }
 }
