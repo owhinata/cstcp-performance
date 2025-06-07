@@ -12,7 +12,7 @@
 
 #define PORT 5000
 #define BUFFER_SIZE 512
-#define SEND_COUNT 1000
+#define SEND_COUNT 100000
 
 static void fill_random(unsigned char* buf, size_t len)
 {
