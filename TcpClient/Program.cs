@@ -20,7 +20,7 @@ class TcpClientApp
 
             var receiveBuffer = new byte[512];
             int totalReceived = 0;
-            while (totalReceived < 512 * 1000)
+            while (totalReceived < 512 * 100000)
             {
                 int bytesRead = await stream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
                 if (bytesRead == 0)
