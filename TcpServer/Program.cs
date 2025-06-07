@@ -34,7 +34,7 @@ class TcpServer
         try
         {
             var sw = Stopwatch.StartNew();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 await stream.WriteAsync(SendBuffer, 0, SendBuffer.Length);
             }

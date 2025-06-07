@@ -14,7 +14,7 @@ fn run() -> Result<(), Box<dyn Error>> {
 
     let mut receive_buffer = [0u8; 512];
     let mut total_received = 0;
-    while total_received < 512 * 1000 {
+    while total_received < 512 * 100000 {
         let bytes_read = stream.read(&mut receive_buffer)?;
         if bytes_read == 0 {
             return Ok(());
