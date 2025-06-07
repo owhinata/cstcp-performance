@@ -19,7 +19,7 @@ To build the native Linux server, use CMake:
 cmake -S TcpServerNative -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build
 ```
 
-## パッケージインストール
+## Package Installation
 
 ```bash
 winget install --id Microsoft.DotNet.SDK.9
@@ -27,10 +27,10 @@ winget install --id Rustlang.Rustup
 winget install --id Microsoft.VisualStudio.2022.BuildTools -e  # Enable C++ build tools
 ```
 
-## 結果
+## Results
 
 CPU: AMD Ryzen 7 8840U w/ Radeon 780M Graphics
-Ether: 2.5 Gbps
+Ethernet: 2.5 Gbps
 
 | Client | Server | Result |
 | ------ | ------ | ------ |
