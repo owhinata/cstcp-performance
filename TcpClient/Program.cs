@@ -8,6 +8,7 @@ class TcpClientApp
     static async Task Main()
     {
         using var client = new TcpClient();
+        client.NoDelay = true;
 
         try
         {
@@ -29,6 +30,7 @@ class TcpClientApp
             }
 
             await stream.WriteAsync(new byte[] { 1 }, 0, 1);
+            await stream.FlushAsync();
 
             var resultBuffer = new byte[64];
             int len = await stream.ReadAsync(resultBuffer, 0, resultBuffer.Length);

@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 class TcpServer
 {
+    private static readonly byte[] SendBuffer = new byte[512];
+
     static async Task Main()
     {
+        Random.Shared.NextBytes(SendBuffer);
+
         var listener = new TcpListener(IPAddress.Any, 5000);
+        listener.Server.NoDelay = true;
         listener.Start();
         Console.WriteLine("TCP Server started on port 5000.");
 
@@ -24,16 +29,16 @@ class TcpServer
     static async Task HandleClient(TcpClient client)
     {
         using var stream = client.GetStream();
-        var sendBuffer = new byte[512];
-        new Random().NextBytes(sendBuffer);
+        client.NoDelay = true;
 
         try
         {
             var sw = Stopwatch.StartNew();
             for (int i = 0; i < 1000; i++)
             {
-                await stream.WriteAsync(sendBuffer, 0, sendBuffer.Length);
+                await stream.WriteAsync(SendBuffer, 0, SendBuffer.Length);
             }
+            await stream.FlushAsync();
 
             var responseBuffer = new byte[16];
             int bytesRead = 0;
