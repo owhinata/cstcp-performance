@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 
 class TcpClientApp
 {
-    static async Task Main()
+    static async Task Main(string[] args)
     {
         using var client = new TcpClient();
         client.NoDelay = true;
 
         try
         {
-            await client.ConnectAsync("127.0.0.1", 5000);
+            var serverIp = args.Length > 0 ? args[0] : "127.0.0.1";
+            await client.ConnectAsync(serverIp, 5000);
             Console.WriteLine("Connected to server.");
 
             using var stream = client.GetStream();
